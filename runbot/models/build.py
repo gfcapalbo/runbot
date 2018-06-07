@@ -284,7 +284,7 @@ class runbot_build(models.Model):
                     'author_email': build.author_email,
                     'committer': build.committer,
                     'committer_email': build.committer_email,
-                    'subject': u'♻️ %s' % build.subject,
+                    'subject': u'♻️ ' in build.subject and build.subject or u'♻️ %s' % build.subject,
                     'modules': build.modules,
                 })
                 build = new_build

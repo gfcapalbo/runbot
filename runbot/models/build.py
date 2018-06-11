@@ -789,6 +789,7 @@ class runbot_build(models.Model):
     def _job_21_coverage_html(self, build, lock_path, log_path):
         if not build.coverage:
             return -2
+        build._log('coverage_html', 'Start generating coverage html')
         pyversion = get_py_version(build)
         cov_path = build._path('coverage')
         os.makedirs(cov_path, exist_ok=True)
@@ -798,9 +799,14 @@ class runbot_build(models.Model):
     def _job_22_coverage_result(self, build, lock_path, log_path):
         if not build.coverage:
             return -2
-        cov = coverage.coverage(data_file=build._path('.coverage'))
-        cov.load()
-        build.coverage_result = cov.report()
+        build._log('coverage_result', 'Start getting coverage result')
+        cov_path = build._path('.coverage')
+        if os.path.exists(cov_path):
+            cov = coverage.coverage(data_file=cov_path)
+            cov.load()
+            build.coverage_result = cov.report()
+        else:
+            build._log('coverage_result', 'Coverage file not found')
         return -2  # nothing to wait for
 
     def _job_30_run(self, build, lock_path, log_path):
